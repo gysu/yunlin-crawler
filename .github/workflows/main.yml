@@ -1,0 +1,42 @@
+name: 雲林管線自動打卡查詢
+
+on:
+  schedule:
+    # 台灣時間每天晚上 19:00 執行 (換算 UTC 時間為 11:00)
+    - cron: '0 11 * * *'
+  workflow_dispatch: # 保留手動觸發按鈕
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 1. 複製儲存庫程式碼
+      uses: actions/checkout@v3
+
+    - name: 2. 設定 Python 環境
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: 3. 安裝 Linux 系統依賴 (ddddocr 與瀏覽器所需)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
+
+    - name: 4. 安裝 Python 必備套件
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests pandas dotenv ddddocr playwright beautifulsoup4 openpyxl fitz PyMuPDF
+
+    - name: 5. 安裝 Playwright 瀏覽器核心
+      run: playwright install chromium
+
+    - name: 6. 執行自動化腳本
+      env:
+        account: ${{ secrets.ACCOUNT }}
+        pwd: ${{ secrets.PWD }}
+        LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+        LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+      # 使用 xvfb-run 來模擬螢幕，完美相容您的 headless=False 設定
+      run: xvfb-run python test.py
