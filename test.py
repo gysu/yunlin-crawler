@@ -24,8 +24,9 @@ def login(page: Page):
     """使用 Playwright 進行登入，包含驗證碼辨識"""
     print("導向登入頁面...")
     # 這裡的 AppIn 是原先登入的入口
-    page.goto("https://pwd.yunlin.gov.tw/YLPipe/AppIn")
-
+    # page.goto("https://pwd.yunlin.gov.tw/YLPipe/AppIn")
+    print("導向登入頁面...")
+    page.goto("https://pwd.yunlin.gov.tw/YLPipe/AppIn", wait_until='commit', timeout=90000)
     print("填寫帳號和密碼...")
     page.locator('input[name="ID"]').fill(ACCOUNT)
     page.locator('input[name="Password"]').fill(PWD)
