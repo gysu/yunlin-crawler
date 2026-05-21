@@ -22,8 +22,9 @@ jobs:
     - name: 3. 安裝 Linux 系統依賴 (ddddocr 與瀏覽器所需)
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
-
+        # 替換為新版 Ubuntu 支援的 libgl1 套件，並加上 ddddocr 必備的 X11 基礎庫
+        sudo apt-get install -y libgl1 libglib2.0-0 libsm6 libxext6 libxrender-dev
+        
     - name: 4. 安裝 Python 必備套件
       run: |
         python -m pip install --upgrade pip
